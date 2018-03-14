@@ -20,10 +20,10 @@ def geocentricRh(lat, h):
 	'''
 
 	# Calculate the distance 
-	rh = np.sqrt(((EARTH_EQR**2 * np.cos(lat))**2 + (EARTH_POLR**2 * np.sin(lat))**2) \
+	Rh = np.sqrt(((EARTH_EQR**2 * np.cos(lat))**2 + (EARTH_POLR**2 * np.sin(lat))**2) \
 		/ ((EARTH_EQR * np.cos(lat))**2 + (EARTH_POLR * np.sin(lat))**2)) + h
 	
-	return rh 
+	return Rh 
 
 def geodesicToXYZ(lat, lon, h):
 	''' Converts the geodesic Earth coordinates to coordinates in the Cartesian coordinate system
@@ -35,7 +35,7 @@ def geodesicToXYZ(lat, lon, h):
 			h: [float] Height of the object from the Earth's surface.
 
 		Return:
-			(x, y, z): [tuple of floats] A tuple of (X, Y, Z) Cartesian coordinates of the object. 
+			position: [tuple of floats] A tuple of (X, Y, Z) Cartesian coordinates of the object. 
 	'''			
 
 
@@ -44,14 +44,16 @@ def geodesicToXYZ(lat, lon, h):
 	lon = np.deg2rad(lon)
 
 	# Get distance from the Earth's centre
-	rh = geocentricRh(lat, h)
+	Rh = geocentricRh(lat, h)
 
 	# Calculate Cartesian coordinates
-	x = rh * np.cos(lat) * np.cos(lon)
-	y = rh * np.cos(lat) * np.sin(lon)
-	z = rh * np.sin(lat)
+	x = Rh * np.cos(lat) * np.cos(lon)
+	y = Rh * np.cos(lat) * np.sin(lon)
+	z = Rh * np.sin(lat)
 
-	return (x, y, z)
+	position = (x, y, z)
+	
+	return position
 
 if __name__ == '__main__':
 
