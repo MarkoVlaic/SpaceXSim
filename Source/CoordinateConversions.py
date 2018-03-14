@@ -7,8 +7,30 @@ import numpy as np
 EARTH_POLR = 6356.7523e3
 EARTH_EQR = 6378.1370e3
 
+# Second eccentricity squared - the Earth is considered as an ellipsoid
+ECC_SQR = 1 - (EARTH_POLR / EARTH_EQR)**2
+SEC_ECC_SQR = ECC_SQR / (1 - ECC_SQR)
+D = SEC_ECC_SQR * EARTH_POLR
 
-def geocentricRh(lat, h):
+
+def originDist(x, y, z):
+	''' Calculates the distance of a given point from the origin of the geocentric Cartesian coordinate system. 
+
+		Arguments:
+			x: [float] X coordinate of the 3D position (in m).
+			y: [float] Y coordinate of the 3D position (in m).
+			z: [float] Z coordinate of the 3D position (in m).
+	
+		Return:
+			r: [float] Distance from the origin (in m).
+	'''
+
+	r = np.sqrt(x**2 + y**2 + z**2)
+
+	return r 
+
+
+def geocentricR(lat):
 	''' Calculates the distance from the Earth's centre given a latitude and object height. 
 		
 		Arguments:
@@ -20,14 +42,15 @@ def geocentricRh(lat, h):
 	'''
 
 	# Calculate the distance 
-	Rh = np.sqrt(((EARTH_EQR**2 * np.cos(lat))**2 + (EARTH_POLR**2 * np.sin(lat))**2) \
-		/ ((EARTH_EQR * np.cos(lat))**2 + (EARTH_POLR * np.sin(lat))**2)) + h
+	R = np.sqrt(((EARTH_EQR**2 * np.cos(lat))**2 + (EARTH_POLR**2 * np.sin(lat))**2) \
+		/ ((EARTH_EQR * np.cos(lat))**2 + (EARTH_POLR * np.sin(lat))**2))
 	
-	return Rh 
+	return R
 
-def geodesicToXYZ(lat, lon, h):
+
+def geodeticToCartesian(lat, lon, h):
 	''' Converts the geodesic Earth coordinates to coordinates in the Cartesian coordinate system
-		(with its center as the system's origin)
+		(with its center as the system's origin).
 
 		Arguments:
 			lat: [float] Latitude of the object (deg).
@@ -38,28 +61,71 @@ def geodesicToXYZ(lat, lon, h):
 			position: [tuple of floats] A tuple of (X, Y, Z) Cartesian coordinates of the object. 
 	'''			
 
-
 	# Convert to radians
 	lat = np.deg2rad(lat)
 	lon = np.deg2rad(lon)
 
 	# Get distance from the Earth's centre
-	Rh = geocentricRh(lat, h)
+	R = geocentricR(lat)
 
 	# Calculate Cartesian coordinates
-	x = Rh * np.cos(lat) * np.cos(lon)
-	y = Rh * np.cos(lat) * np.sin(lon)
-	z = Rh * np.sin(lat)
+	x = (R + h) * np.cos(lat) * np.cos(lon)
+	y = (R + h) * np.cos(lat) * np.sin(lon)
+	z = (R + h) * np.sin(lat)
 
 	position = (x, y, z)
 	
 	return position
 
+
+def cartesianToGeodetic(x, y, z):
+	''' Converts the Cartesian positional coordinates to geodesic coordinates. 
+		Implemented according to (Bowring, 1985.). 
+
+		Arguments:
+			x: [float] X coordinate of the 3D position (in m).
+			y: [float] Y coordinate of the 3D position (in m).
+			z: [float] Z coordinate of the 3D position (in m).
+
+		Return:
+			[tuple of floats] A tuple of (lat, lon, h) geodesic coordinates of the object. 
+	'''
+
+	# Planar and 3D distances
+	p = np.sqrt(x**2 + y**2)
+	r = np.sqrt(x**2 + y**2 + z**2)
+	
+	# Angle chasing
+	tu = EARTH_POLR * z * (1 + D/r) / (EARTH_EQR * p)
+	cu3 = 1 / np.sqrt(1 + tu**2)**3
+	tp = (z + D * cu3 * tu**3) / (p - ECC_SQR * EARTH_EQR * cu3)
+	cp = 1 / np.sqrt(1 + tp**2)
+
+	# Calculate final coordinates
+	lat = np.arctan(tp)
+	lon = np.arctan2(y, x)
+	h = p * cp + z * cp * tp - EARTH_EQR*np.sqrt(1 - ECC_SQR*(cp * tp)**2)
+
+	position = (lat, lon, h)
+
+	return position
+
+
 if __name__ == '__main__':
 
 	### Testing ###
-	print(geocentricRh(0, 0))
+	# print(geocentricR(0))
 
-	x, y, z = geodesicToXYZ(10, 0, 10)
+	lat_init = 10
+	lon_init = 20
+	h_init = 0
 
-	print('{0:1.4e}'.format(x), '{0:1.4e}'.format(y), '{0:1.4e}'.format(z))
+	x, y, z = geodeticToCartesian(lat_init, lon_init, h_init)
+	lat, lon, h = map(np.rad2deg, cartesianToGeodetic(x, y, z))
+
+	print('Initial geodesic coordinates: {:.2f}, {:.2f}, {:.2f}'.format(lat_init, lon_init, h_init))
+	print('Calculated Cartesian: {0:1.4e}, {0:1.4e}, {0:1.4e}'.format(x, y, z))
+	print('After transformation from Cartesian to geodesic: {:.2f}, {:.2f}, {:.2f}'.format(lat, lon, h))
+
+	print('Distance from origin - geocentric radius at a calculated latitude:')
+	print(originDist(x, y, z) - geocentricR(np.deg2rad(lat)))

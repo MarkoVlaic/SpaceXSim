@@ -30,8 +30,6 @@ def gravity(position, rocket_mass):
 	Fy = (const.G * EARTH_MASS * rocket_mass) / r**3 * y
 	Fz = (const.G * EARTH_MASS * rocket_mass) / r**3 * z
 
-	F = (Fx, Fy, Fz)
+	F = (-Fx, -Fy, -Fz)
 
 	return F
-
-
