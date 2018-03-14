@@ -26,9 +26,9 @@ def gravity(position, rocket_mass):
 	r = np.sqrt(x**2 + y**2 + z**2)
 
 	# Calculate x, y, z components of the force of gravity
-	Fx = (const.G * EARTH_MASS * rocket_mass) / r * x
-	Fy = (const.G * EARTH_MASS * rocket_mass) / r * y
-	Fz = (const.G * EARTH_MASS * rocket_mass) / r * z
+	Fx = (const.G * EARTH_MASS * rocket_mass) / r**3 * x
+	Fy = (const.G * EARTH_MASS * rocket_mass) / r**3 * y
+	Fz = (const.G * EARTH_MASS * rocket_mass) / r**3 * z
 
 	F = (Fx, Fy, Fz)
 
