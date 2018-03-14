@@ -1,6 +1,7 @@
 ''' Tools for performing the transformations of coordinates of spatial coordinate systems. '''
 
 import numpy as np
+import LinearAlgebra as linalg
 
 
 # Earth's polar and equatorial radii (in meters)
@@ -13,23 +14,6 @@ SEC_ECC_SQR = ECC_SQR / (1 - ECC_SQR)
 D = SEC_ECC_SQR * EARTH_POLR
 
 
-def originDist(x, y, z):
-	''' Calculates the distance of a given point from the origin of the geocentric Cartesian coordinate system. 
-
-		Arguments:
-			x: [float] X coordinate of the 3D position (in m).
-			y: [float] Y coordinate of the 3D position (in m).
-			z: [float] Z coordinate of the 3D position (in m).
-	
-		Return:
-			r: [float] Distance from the origin (in m).
-	'''
-
-	r = np.sqrt(x**2 + y**2 + z**2)
-
-	return r 
-
-
 def geocentricR(lat):
 	''' Calculates the distance from the Earth's centre given a latitude and object height. 
 		
@@ -37,7 +21,7 @@ def geocentricR(lat):
 			lat: [float] Latitude of the object (rad).
 			h: [float] Height of the object from the Earth's surface.
 
-		Return:
+		Returns:
 			Rh: [float] The distance of the object from the Earth's centre. 
 	'''
 
@@ -55,9 +39,9 @@ def geodeticToCartesian(lat, lon, h):
 		Arguments:
 			lat: [float] Latitude of the object (deg).
 			lon: [float] Longitude of the object (deg).
-			h: [float] Height of the object from the Earth's surface.
+			h: [float] Height of the object from the Earth's surface. (m)
 
-		Return:
+		Returns:
 			position: [tuple of floats] A tuple of (X, Y, Z) Cartesian coordinates of the object. 
 	'''			
 
@@ -83,12 +67,12 @@ def cartesianToGeodetic(x, y, z):
 		Implemented according to (Bowring, 1985.). 
 
 		Arguments:
-			x: [float] X coordinate of the 3D position (in m).
-			y: [float] Y coordinate of the 3D position (in m).
-			z: [float] Z coordinate of the 3D position (in m).
+			x: [float] X coordinate of the 3D position (m).
+			y: [float] Y coordinate of the 3D position (m).
+			z: [float] Z coordinate of the 3D position (m).
 
-		Return:
-			[tuple of floats] A tuple of (lat, lon, h) geodesic coordinates of the object. 
+		Returns:
+			position: [tuple of floats] A tuple of (lat, lon, h) geodesic coordinates of the object. 
 	'''
 
 	# Planar and 3D distances
@@ -111,6 +95,30 @@ def cartesianToGeodetic(x, y, z):
 	return position
 
 
+def getHeight(x, y, z):
+	''' Calculates the height of a point from the Earth's surface given that point's position.
+
+		Arguments:
+			x: [float] X coordinate of the 3D position (m).
+			y: [float] Y coordinate of the 3D position (m).
+			z: [float] Z coordinate of the 3D position (m).
+
+		Returns:
+			h: [float] Height of the object from the Earth's surface.
+	'''
+
+	# Get latitude of a given position
+	lat = cartesianToGeodetic(x, y, z)[0]
+	
+	# Get the radius of the Earth 
+	earth_radius = geocentricR(lat)
+	radius = linalg.originDist(x, y, z)
+
+	height = radius - earth_radius
+
+	return height
+	
+
 if __name__ == '__main__':
 
 	### Testing ###
@@ -128,4 +136,4 @@ if __name__ == '__main__':
 	print('After transformation from Cartesian to geodesic: {:.2f}, {:.2f}, {:.2f}'.format(lat, lon, h))
 
 	print('Distance from origin - geocentric radius at a calculated latitude:')
-	print(originDist(x, y, z) - geocentricR(np.deg2rad(lat)))
+	print(getHeight(x, y, z))
