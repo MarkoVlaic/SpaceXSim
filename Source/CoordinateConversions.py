@@ -117,7 +117,50 @@ def getHeight(x, y, z):
 	height = radius - earth_radius
 
 	return height
-	
+
+def customToCartesian(r, phi, beta):
+	''' Converts the Cartesian coordinate vector position to a spherical coordinate system vector defined by two angles and its magnitude. 
+		Arguments:
+			x: [float] X coordinate of the 3D position (m).
+			y: [float] Y coordinate of the 3D position (m).
+			z: [float] Z coordinate of the 3D position (m).
+
+		Returns:
+			position: [tuple of floats] The coordinates of the vector in the modified spherical coordinate system. Comprised of:
+				r: [float] The length of the vector (its magnitude in m).
+				phi: [float] The orbit angle, measured clockwise from the Z axis (rad).
+				beta: [float] The launch angle, measured clockwise from the XY plane (rad).
+	'''
+
+	x = r * np.sin(phi) * np.cos(beta)
+	y = r * np.cos(phi) * np.cos(beta)
+	z = r * np.cos(phi) * np.cos(beta)
+
+	position = (x, y, z)
+    
+	return position
+
+
+def cartesianToCustom(x, y, z):
+	''' Converts the coordinates in a modified spherical coordinate system to Cartesian coordinates. 
+
+	Arguments:
+		r: [float] The length of the vector (its magnitude in m).
+		phi: [float] The orbit angle, measured clockwise from the Z axis (rad).
+		beta: [float] The launch angle, measured clockwise from the XY plane (rad).
+		
+	Returns:
+		position: [tuple of floats] A tuple of (X, Y, Z) Cartesian coordinates of the object.
+	'''
+    
+	r = np.sqrt(x**2 + y**2 + z**2)
+	phi = np.atan2(x, y)
+	beta = np.atan2(z, y)
+
+	position = (r, phi, beta)
+
+	return position
+
 
 if __name__ == '__main__':
 
