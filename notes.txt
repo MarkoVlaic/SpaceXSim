@@ -1,0 +1,9 @@
+implement better algorithms and methods:
+a better (possibly iterative) algorithm for converting cart to geo
+jacchia model atmosphere - dependent on time and geographical position
+get real rocket data -> database
+possibly a better numerical integrator, but not likely
+
+limitations:
+this works only in the relative vicinity of the Earth (not taking in the gravitational pull of other solar system bodies)
+

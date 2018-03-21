@@ -124,15 +124,15 @@ if __name__ == '__main__':
 	### Testing ###
 	# print(geocentricR(0))
 
-	lat_init = 10
-	lon_init = 20
+	lat_init = 0
+	lon_init = 0
 	h_init = 0
 
 	x, y, z = geodeticToCartesian(lat_init, lon_init, h_init)
 	lat, lon, h = map(np.rad2deg, cartesianToGeodetic(x, y, z))
 
 	print('Initial geodesic coordinates: {:.2f}, {:.2f}, {:.2f}'.format(lat_init, lon_init, h_init))
-	print('Calculated Cartesian: {0:1.4e}, {0:1.4e}, {0:1.4e}'.format(x, y, z))
+	print('Calculated Cartesian coordinates: ' '{:1.4e},'.format(x), '{:1.4e},'.format(y), '{:1.4e}'.format(z))
 	print('After transformation from Cartesian to geodesic: {:.2f}, {:.2f}, {:.2f}'.format(lat, lon, h))
 
 	print('Distance from origin - geocentric radius at a calculated latitude:')

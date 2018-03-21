@@ -55,6 +55,7 @@ def atm_density(position):
 	# Unpack values from tuple
 	x, y, z = position
 
+	# Calculate atmosphere density at a given height (exponentially decreasing)
 	dens_pos = DENS_SEALVL * np.exp(-conv.getHeight(x, y, z)/SCALE_HEIGHT) 
 
 	return dens_pos
@@ -82,6 +83,7 @@ def drag_abs(velocity_3d, drag_coeff, position, area):
 	# Calculate the absolute value of the velocity vector
 	vel_abs = linalg.originDist(vel_x, vel_y, vel_z)
 
+	# Calculate the drag force
 	drag = 0.5 * drag_coeff * vel_abs**2 * atm_density(position) * area
 
 	return drag
