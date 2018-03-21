@@ -49,7 +49,6 @@ def atm_density(position):
 
 		Returns:
 			dens_pos: [float] The atmospheric density at a given position (kgm-3).
-
 	'''
 	
 	# Unpack values from tuple
@@ -72,7 +71,6 @@ def drag_abs(velocity_3d, drag_coeff, position, area):
 
 		Returns:
 			drag: [float] The absolute value of the drag force exerted on the object (N).
-
 	'''
 
 	# Unpack velocity vectors
@@ -87,3 +85,23 @@ def drag_abs(velocity_3d, drag_coeff, position, area):
 	drag = 0.5 * drag_coeff * vel_abs**2 * atm_density(position) * area
 
 	return drag
+
+def thrust_abs(exhaust_velocity, dm, dt):
+    ''' Calculates the absolute thrust force on an object. 
+
+        Arguments:
+            exhaust_velocity: [float] The exhaust gas velocity of a given rocket (ms-1).
+            dm: change in mass (kg).
+            dt: change in time (s).
+
+        Return:
+            thrust: [float] The absolute value of the thrust force exerted on the object (N).
+    '''
+
+    return exhaust_velocity * dm / dt
+
+
+
+
+
+
