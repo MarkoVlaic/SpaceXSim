@@ -118,6 +118,7 @@ def getHeight(x, y, z):
 
 	return height
 
+
 def customToCartesian(r, phi, beta):
 	''' Converts the Cartesian coordinate vector position to a spherical coordinate system vector defined by two angles and its magnitude. 
 		Arguments:

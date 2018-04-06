@@ -41,6 +41,7 @@ def gravity(position, rocket_mass):
 
 	return F
 
+
 def atm_density(position):
 	''' Calculates the air density at a given position (height). 
 		
@@ -86,22 +87,20 @@ def drag_abs(velocity_3d, drag_coeff, position, area):
 
 	return drag
 
+
 def thrust_abs(exhaust_velocity, dm, dt):
     ''' Calculates the absolute thrust force on an object. 
 
         Arguments:
             exhaust_velocity: [float] The exhaust gas velocity of a given rocket (ms-1).
-            dm: change in mass (kg).
-            dt: change in time (s).
+            dm: Change in mass (kg).
+            dt: Change in time (s).
 
         Return:
             thrust: [float] The absolute value of the thrust force exerted on the object (N).
     '''
 
-    return exhaust_velocity * dm / dt
-
-
-
-
-
-
+    # Calculate the thrust force
+    thrust = exhaust_velocity * dm / dt 
+    
+    return thrust
