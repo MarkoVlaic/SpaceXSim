@@ -5,13 +5,7 @@ import scipy.constants as const
 
 import CoordinateConversions as conv
 import LinearAlgebra as linalg
-
-# Earth's mass (in kg)
-EARTH_MASS = 5.9722e24
-
-# Atmospheric constants
-DENS_SEALVL = 1.225 # kgm-3
-SCALE_HEIGHT = 8500 # m
+import InitialParameters as init
 
 def gravity(position, rocket_mass):
 	''' Calculates the gravitational force on the rocket at any point. 
@@ -33,9 +27,9 @@ def gravity(position, rocket_mass):
 	r = np.sqrt(x**2 + y**2 + z**2)
 
 	# Calculate x, y, z components of the force of gravity
-	Fx = (const.G * EARTH_MASS * rocket_mass) / r**3 * x
-	Fy = (const.G * EARTH_MASS * rocket_mass) / r**3 * y
-	Fz = (const.G * EARTH_MASS * rocket_mass) / r**3 * z
+	Fx = (const.G * init.Earth.mass * rocket_mass) / r**3 * x
+	Fy = (const.G * init.Earth.mass * rocket_mass) / r**3 * y
+	Fz = (const.G * init.Earth.mass * rocket_mass) / r**3 * z
 
 	F = (-Fx, -Fy, -Fz)
 
@@ -56,7 +50,7 @@ def atm_density(position):
 	x, y, z = position
 
 	# Calculate atmosphere density at a given height (exponentially decreasing)
-	dens_pos = DENS_SEALVL * np.exp(-conv.getHeight(x, y, z)/SCALE_HEIGHT) 
+	dens_pos = init.Atmosphere.dens_sealvl * np.exp(-conv.getHeight(x, y, z)/init.Atmosphere.scale_height) 
 
 	return dens_pos
 
