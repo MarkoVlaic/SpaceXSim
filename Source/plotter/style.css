@@ -1,0 +1,44 @@
+body {
+  font-family: Helvetica, sans-serif;
+}
+
+input[type="file"] {
+  opacity: 0;
+}
+
+#fileLabel {
+  display: inline-block;
+  padding: 15px 10px;
+  color: white;
+  background-color: #688DD1;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#fileInfo {
+  font-size: 1.2em;
+  display: inline;
+  margin: 0;
+}
+
+#mainContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  align-items: center;
+}
+
+#gui {
+  flex: 1;
+}
+
+#chartContainer {
+  width: 80%;
+  flex: 12;
+}
+
+canvas {
+  width: 100%;
+}

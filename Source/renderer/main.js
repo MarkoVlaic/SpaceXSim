@@ -1,7 +1,8 @@
 const { Scene, PerspectiveCamera, WebGLRenderer, Mesh, SphereGeometry, MeshPhongMaterial, AmbientLight, DirectionalLight } = THREE;
 
 let scene, camera, renderer; //Rendering elements
-let earth; //Earth modle
+let earth; //Earth model
+let clouds;
 
 window.onload = () => {
   //Initialize the scene, camera and renderer. After this we can render to screen
@@ -27,14 +28,15 @@ window.onload = () => {
 
   //Create all objects in the scene
   const initGeometry = () => {
-    const geometry = new SphereGeometry(0.5, 32, 32); //Geometry for the earth model
-    const material = new MeshPhongMaterial();
+    //Setup the earth model
+    let geometry = new SphereGeometry(0.5, 32, 32); //Geometry for the earth model
+    let material = new MeshPhongMaterial();
 
     const loader = new THREE.TextureLoader();
     loader.crossOrigin = true;
 
     material.map = loader.load('static/earthmap1k.jpg'); //Load the earth texture (map of the earth)
-
+    console.log('Earthmap1k.jpg', material.map);
     material.bumpMap = loader.load('static/earthbump1k.jpg'); //Load the bump map (terrain)
     material.bumpScale = 0.05; //Scale the bumps down so that everything looks normal
 
@@ -42,7 +44,24 @@ window.onload = () => {
     material.specular = new THREE.Color('grey');
 
     earth = new Mesh(geometry, material); //Create the earth model
+    earth.recieveShadow = false;
     scene.add(earth);
+
+    geometry = new SphereGeometry(0.505, 32, 32);
+    let cloudTex = loader.load('static/clouds.jpg');
+
+    material = new MeshPhongMaterial({
+      map: cloudTex,
+      side: THREE.DoubleSide,
+      opacity: 0.28,
+      transparent: true,
+      depthWrite: false
+    });1
+
+    clouds = new Mesh(geometry, material);
+    clouds.castShadow = false;
+    clouds.renderOrder = 1;
+    scene.add(clouds);
   }
 
   //Create lighting for the scene
@@ -56,7 +75,7 @@ window.onload = () => {
 
   const render = () => {
     requestAnimationFrame(render);
-
+    clouds.rotation.y += 0.0003;
     renderer.render(scene, camera);
   }
 
