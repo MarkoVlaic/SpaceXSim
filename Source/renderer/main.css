@@ -13,3 +13,27 @@ canvas {
   width: 100vw;
   height: 100vh;
 }
+
+input[type="file"] {
+  opacity: 0;
+}
+
+.btn {
+  display: inline-block;
+  padding: 15px 10px;
+  color: white;
+  background-color: #688DD1;
+  margin: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#fileInfo {
+  font-size: 1.2em;
+  display: inline;
+  margin: 0;
+}
+
+.disabled {
+  opacity: 0.7;
+}

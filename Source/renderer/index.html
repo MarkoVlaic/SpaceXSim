@@ -9,12 +9,19 @@
 </head>
 <body>
   <div id="mainContainer">
-    <div id="gui"></div>
+    <div id="gui">
+      <label id="fileLabel" for="fileInput" class="btn">Select file</label>
+      <p id="fileInfo">No files selected</p>
+      <p class="btn" id="start">Start</p>
+      <input name="fileInput" type="file" id="fileInput" accept=".csv">
+    </div>
     <div id="renderContainer"></div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/91/three.min.js"></script>
   <script src="https://mamboleoo.be/learnThree/demos/OBJLoader.js"></script>
   <script src="./lib/MTLLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.4.0/papaparse.min.js"></script>
+  <script src="./fileHandler.js"></script>
   <script src="./main.js"></script>
 </body>
 </html>

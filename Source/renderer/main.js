@@ -3,6 +3,10 @@ const { Scene, PerspectiveCamera, WebGLRenderer, Mesh, SphereGeometry, MeshPhong
 let scene, camera, renderer; //Rendering elements
 let earth; //Earth model
 let clouds;
+let rocket;
+
+let iterationIndex = -1;
+let moveInterval;
 
 window.onload = () => {
   //Initialize the scene, camera and renderer. After this we can render to screen
@@ -76,7 +80,44 @@ window.onload = () => {
   const render = () => {
     requestAnimationFrame(render);
     clouds.rotation.y += 0.0003;
+
+    if(started){
+      if(iterationIndex == -1)instantiateRocket();
+    }
+
     renderer.render(scene, camera);
+    //console.log(started);
+  }
+
+  const instantiateRocket = () => {
+    let geometry = new SphereGeometry(0.01, 10, 10);
+    let material = new MeshPhongMaterial({color: 0xD162D1});
+
+    let rocket = new Mesh(geometry, material);
+    rocket.position.x = data[0][0];
+    rocket.position.y = data[0][1];
+    rocket.position.z = data[0][2];
+
+    scene.add(rocket);
+
+    iterationIndex++;
+
+    moveInterval = setInterval(moveRocket, 100);
+  }
+
+  const moveRocket = () => {
+    iterationIndex++;
+    if(iterationIndex < data.length){
+      rocket.position.x = data[iterationIndex][0];
+      rocket.position.y = data[iterationIndex][1];
+      rocket.position.z = data[iterationIndex][2];
+    }else {
+      started = false;
+      iterationIndex = -1;
+
+      alert('done');
+      clearInterval(moveInterval);
+    }
   }
 
   init();
